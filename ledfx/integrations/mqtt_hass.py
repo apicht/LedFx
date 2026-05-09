@@ -561,10 +561,20 @@ class MQTT_HASS(Integration):
                     try:
                         virtual.set_effect(effect)
                         virtual.active = payload.get("state", "off") == "on"
-
                     except (ValueError, RuntimeError) as msg:
                         _LOGGER.warning(msg)
                 else:
+                    # Bare on/off toggle from HA: payload has `state` but no
+                    # color or effect. Honor it independently. `active = True`
+                    # raises RuntimeError when the virtual has no configured
+                    # effect (virtuals.py: Virtual.activate); catch and warn
+                    # rather than crashing the MQTT thread. `active = False`
+                    # is always safe.
+                    if "state" in payload:
+                        try:
+                            virtual.active = payload["state"] == "on"
+                        except RuntimeError as msg:
+                            _LOGGER.warning(msg)
                     _LOGGER.debug("COLOR: %s", color)
                     # effect = self._ledfx.effects.create(
                     #     ledfx=self._ledfx,
