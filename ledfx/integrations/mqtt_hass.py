@@ -250,6 +250,7 @@ class MQTT_HASS(Integration):
                     "device": hass_device,
                 }
             ),
+            retain=True,
         )
 
         # SCENE SELECTOR
@@ -271,6 +272,7 @@ class MQTT_HASS(Integration):
                     "device": hass_device,
                 }
             ),
+            retain=True,
         )
 
         # AUDIO SELECTOR
@@ -290,6 +292,7 @@ class MQTT_HASS(Integration):
                     "device": hass_device,
                 }
             ),
+            retain=True,
         )
 
         # TRANSITION TYPE
@@ -322,6 +325,7 @@ class MQTT_HASS(Integration):
                     "device": hass_device,
                 }
             ),
+            retain=True,
         )
 
         # TRANSITION TIME
@@ -346,6 +350,7 @@ class MQTT_HASS(Integration):
                     "device": hass_device,
                 }
             ),
+            retain=True,
         )
 
         # SWITCH
@@ -363,6 +368,7 @@ class MQTT_HASS(Integration):
                     "device": hass_device,
                 }
             ),
+            retain=True,
         )
 
         # Create Virtuals as Light in HomeAssistant
@@ -410,6 +416,7 @@ class MQTT_HASS(Integration):
                         "device": hass_device,
                     }
                 ),
+                retain=True,
             )
 
             client.subscribe(f"{self._config['topic']}/light/{virtual.id}/set")
@@ -674,6 +681,7 @@ class MQTT_HASS(Integration):
                                 "device": hass_device,
                             }
                         ),
+                        retain=True,
                     )
 
                 # TODO: Stare at this to convince self, not writing unit test for this
@@ -695,38 +703,50 @@ class MQTT_HASS(Integration):
     # Clean up HomeAssistant
     async def on_delete(self):
         self._client.publish(
-            f"{self._config['topic']}/light/ledfxscene/config", json.dumps({})
+            f"{self._config['topic']}/light/ledfxscene/config",
+            json.dumps({}),
+            retain=True,
         )
         self._client.publish(
             f"{self._config['topic']}/light/ledfxtransition/config",
             json.dumps({}),
+            retain=True,
         )
         self._client.publish(
-            f"{self._config['topic']}/select/ledfxaudio/config", json.dumps({})
+            f"{self._config['topic']}/select/ledfxaudio/config",
+            json.dumps({}),
+            retain=True,
         )
         self._client.publish(
             f"{self._config['topic']}/select/ledfxsceneselect/config",
             json.dumps({}),
+            retain=True,
         )
         self._client.publish(
             f"{self._config['topic']}/select/ledfxtransitiontype/config",
             json.dumps({}),
+            retain=True,
         )
         self._client.publish(
             f"{self._config['topic']}/number/ledfxtransitiontime/config",
             json.dumps({}),
+            retain=True,
         )
         self._client.publish(
             f"{self._config['topic']}/sensor/ledfxpixelsensor/config",
             json.dumps({}),
+            retain=True,
         )
         self._client.publish(
-            f"{self._config['topic']}/switch/ledfxplay/config", json.dumps({})
+            f"{self._config['topic']}/switch/ledfxplay/config",
+            json.dumps({}),
+            retain=True,
         )
         for virtual in self._ledfx.virtuals.values():
             self._client.publish(
                 f"{self._config['topic']}/light/{virtual.id}/config",
                 json.dumps({}),
+                retain=True,
             )
 
     async def on_disconnect(self):
